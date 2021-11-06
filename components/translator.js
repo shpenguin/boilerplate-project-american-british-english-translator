@@ -5,7 +5,7 @@ const britishOnly = require('./british-only.js');
 
 class Translator {
 
-    constructor(americanOnly, americanToBritishSpelling, americanToBritishTitles, britishOnly) {
+    constructor() {
         this.AeOnly = Object.entries(americanOnly).sort((a, b) => b[0].length - a[0].length);;
         this.BeOnly = Object.entries(britishOnly).sort((a, b) => b[0].length - a[0].length);;
         this.Ae2BeS = Object.entries(americanToBritishSpelling).sort((a, b) => b[0].length - a[0].length);
