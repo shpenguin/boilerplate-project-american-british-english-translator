@@ -20,7 +20,7 @@ class Translator {
             return { error: 'Required field(s) missing' };
         }
 
-        const validate = () => {
+        /*const validate = () => {
             const locations = [
                 "american-to-british",
                 "british-to-american"
@@ -41,6 +41,19 @@ class Translator {
 
         if (flag) {
             return flag;
+        }*/
+
+        if (context === '') {
+            return { error: 'No text to translate' };
+        }
+
+        const locations = [
+            "american-to-british",
+            "british-to-american"
+        ];
+
+        if (!locations.includes(loc)) {
+            return { error: 'Invalid value for locale field' };
         }
 
         let solution = context, code0 = ':', code1 = '.';
@@ -68,7 +81,7 @@ class Translator {
 
         const timeShuttle = (string, cond, subs) => {
             let result = string;
-            const reg = new RegExp("\\b(\\d\\d)" + cond + "(\\d\\d)\\b", "g");
+            const reg = new RegExp("\\b(\\d?\\d)" + cond + "(\\d\\d?)\\b", "g");
 
             return result.replace(reg, (match, match0, match1) => {
                 let hour = +match0, minute = +match1;
