@@ -63,11 +63,11 @@ suite('Functional Tests', () => {
             chai.request(server)
                 .post('/api/translate')
                 .send({
-                    text: undefined,
+                    text: '',
                     locale: 'british-to-american'
                 })
                 .end(function (err, res) {
-                    assert.equal(res.body.error, '<No text to translate');
+                    assert.equal(res.body.error, 'No text to translate');
                     done();
                 });
         });
