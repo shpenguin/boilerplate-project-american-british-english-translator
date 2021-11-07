@@ -103,6 +103,22 @@ class Translator {
             solution = converter(item, solution);
         }
 
+        if (loc[0] === 'a') {
+            for (let [cond, subs] of this.Ae2BeT) {
+                const reg = new RegExp("\\b" + subs + "\\.(?=\\s)", "ig");
+                solution = solution.replace(reg, match => {
+                    const prefix = '<span class="highlight">';
+                    const suffix = '</span>';
+
+                    if (match[0] < 'a') {
+                        subs = subs[0].toUpperCase() + subs.slice(1);
+                    }
+
+                    return prefix + subs + suffix;
+                });
+            };
+        }
+
         solution = timeShuttle(solution, code0, code1);
 
         if (solution === context) {
