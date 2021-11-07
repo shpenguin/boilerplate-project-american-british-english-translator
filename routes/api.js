@@ -8,6 +8,11 @@ module.exports = function (app) {
 
   app.route('/api/translate')
     .post((req, res) => {
+
+      if (Object.keys(req.body).length < 2) {
+        return res.json({ error: 'Required field(s) missing' });
+      }
+      
       const { text, locale } = req.body;
       return res.json(translator.translate(text, locale));      
     });

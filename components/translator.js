@@ -16,11 +16,11 @@ class Translator {
 
     translate(context, loc) {
 
-        if (!context || !loc) {
+        /*if (!context || !loc) {
             return { error: 'Required field(s) missing' };
         }
 
-        /*const validate = () => {
+        const validate = () => {
             const locations = [
                 "american-to-british",
                 "british-to-american"
@@ -43,7 +43,7 @@ class Translator {
             return flag;
         }*/
 
-        if (context === '') {
+        if (!context) {
             return { error: 'No text to translate' };
         }
 
@@ -111,7 +111,7 @@ class Translator {
 
         return {
             text: context,
-            solution: solution
+            translation: solution
         };
     }
 }
