@@ -16,34 +16,7 @@ class Translator {
 
     translate(context, loc) {
 
-        /*if (!context || !loc) {
-            return { error: 'Required field(s) missing' };
-        }
-
-        const validate = () => {
-            const locations = [
-                "american-to-british",
-                "british-to-american"
-            ];
-
-            if (context = '') {
-                return { error: 'No text to translate' };
-            }
-
-            if (!locations.includes(loc)) {
-                return { error: 'Invalid value for locale field' };
-            }
-
-            return null;
-        };
-
-        const flag = validate();
-
-        if (flag) {
-            return flag;
-        }*/
-
-        if (!context) {
+        if (context === '') {
             return { error: 'No text to translate' };
         }
 
@@ -57,7 +30,8 @@ class Translator {
         }
 
         let solution = context, code0 = ':', code1 = '.';
-        let queue = [this.AeOnly, this.Ae2BeS, this.Ae2BeT];
+        let queue = [this.AeOnly, this.Ae2BeS];
+        let sum = 0;
 
         const converter = (dictionary, input) => {
             let output = input;
@@ -67,6 +41,7 @@ class Translator {
                 output = output.replace(reg, match => {
                     const prefix = '<span class="highlight">';
                     const suffix = '</span>';
+                    sum++;
 
                     if (match[0] < 'a') {
                         subs = subs[0].toUpperCase() + subs.slice(1);
@@ -89,6 +64,7 @@ class Translator {
                 if (hour < 13 && minute < 60) {
                     const prefix = '<span class="highlight">';
                     const suffix = '</span>';
+                    sum++;
                     return prefix + match0 + subs + match1 + suffix;
                 }
             });
@@ -109,6 +85,7 @@ class Translator {
                 solution = solution.replace(reg, match => {
                     const prefix = '<span class="highlight">';
                     const suffix = '</span>';
+                    sum++;
 
                     if (match[0] < 'a') {
                         subs = subs[0].toUpperCase() + subs.slice(1);
@@ -121,7 +98,11 @@ class Translator {
 
         solution = timeShuttle(solution, code0, code1);
 
-        if (solution === context) {
+        /*if (solution === context) {
+            solution = "Everything looks good to me!";
+        }*/
+
+        if (sum === 0) {
             solution = "Everything looks good to me!";
         }
 
