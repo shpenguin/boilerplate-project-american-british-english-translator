@@ -61,7 +61,7 @@ class Translator {
             return result.replace(reg, (match, match0, match1) => {
                 let hour = +match0, minute = +match1;
 
-                if (hour < 13 && minute < 60) {
+                if (hour < 25 && minute < 60) {
                     const prefix = '<span class="highlight">';
                     const suffix = '</span>';
                     sum++;
