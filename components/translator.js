@@ -6,38 +6,47 @@ const britishOnly = require('./british-only.js');
 class Translator {
 
     constructor() {
-        this.AeOnly = Object.entries(americanOnly).sort((a, b) => b[0].length - a[0].length);;
-        this.BeOnly = Object.entries(britishOnly).sort((a, b) => b[0].length - a[0].length);;
-        this.Ae2BeS = Object.entries(americanToBritishSpelling).sort((a, b) => b[0].length - a[0].length);
-        this.Ae2BeT = Object.entries(americanToBritishTitles).sort((a, b) => b[0].length - a[0].length);
+        this.AeOnly = Object.entries(americanOnly);
+        this.BeOnly = Object.entries(britishOnly);
+        this.Ae2BeS = Object.entries(americanToBritishSpelling);
+        this.Ae2BeT = Object.entries(americanToBritishTitles).map(val => [val[0].slice(0, -1) + "\\.", val[1]]);
         this.Be2AeS = this.Ae2BeS.map(val => [val[1], val[0]]);
-        this.Be2AeT = this.Ae2BeT.map(val => [val[1], val[0]]);
+        this.Be2AeT = Object.entries(americanToBritishTitles).map(val => [val[1], val[0]]);
     }
 
     translate(context, loc) {
-
-        if (context === '') {
-            return { error: 'No text to translate' };
-        }
-
         const locations = [
             "american-to-british",
             "british-to-american"
         ];
+        
+        if (context === '') {
+            return { error: 'No text to translate' };
+        }        
 
         if (!locations.includes(loc)) {
             return { error: 'Invalid value for locale field' };
         }
 
         let solution = context, code0 = ':', code1 = '.';
-        let queue = [this.AeOnly, this.Ae2BeS];
+        let queue = [this.AeOnly, this.Ae2BeS, this.Ae2BeT];        
+
+        if (loc[0] === 'b') {
+            queue = [this.BeOnly, this.Be2AeS, this.Be2AeT];
+            [code1, code0] = [code0, '\\.'];
+        }
+
+        let dict = [];
+        queue.forEach(item => item.forEach(val => dict.push(val)));
+        dict = dict.sort((a, b) => b[0].length - a[0].length);
         let sum = 0;
 
         const converter = (dictionary, input) => {
             let output = input;
 
             for (let [cond, subs] of dictionary) {
-                const reg = new RegExp("\\b" + cond + "\\b", "ig");
+                const next = (cond.slice(-1) === '.') ? "(?=\\s)" : "\\b";
+                const reg = new RegExp("\\b" + cond + next, "ig");
                 output = output.replace(reg, match => {
                     const prefix = '<span class="highlight">';
                     const suffix = '</span>';
@@ -70,37 +79,8 @@ class Translator {
             });
         };
 
-        if (loc[0] === 'b') {
-            queue = [this.BeOnly, this.Be2AeS, this.Be2AeT];
-            [code1, code0] = [code0, code1];
-        }
-
-        for (let item of queue) {
-            solution = converter(item, solution);
-        }
-
-        if (loc[0] === 'a') {
-            for (let [cond, subs] of this.Ae2BeT) {
-                const reg = new RegExp("\\b" + subs + "\\.(?=\\s)", "ig");
-                solution = solution.replace(reg, match => {
-                    const prefix = '<span class="highlight">';
-                    const suffix = '</span>';
-                    sum++;
-
-                    if (match[0] < 'a') {
-                        subs = subs[0].toUpperCase() + subs.slice(1);
-                    }
-
-                    return prefix + subs + suffix;
-                });
-            };
-        }
-
+        solution = converter(dict, solution);
         solution = timeShuttle(solution, code0, code1);
-
-        /*if (solution === context) {
-            solution = "Everything looks good to me!";
-        }*/
 
         if (sum === 0) {
             solution = "Everything looks good to me!";
